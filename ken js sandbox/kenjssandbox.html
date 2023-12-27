@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/all.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+
+    <title>Ken JS Sandbox</title>
+</head>
+<body>
+<div class="container-fluid bg-primary text-white">
+    <h1>Ken JS Sandbox</h1>
+
+    <div class="row">
+        row 1
+        <button type="button"
+                onclick="document.getElementById('demo').innerHTML = Date()">
+            Click me to display Date and Time.
+        </button>
+
+        <p id="demo"></p>
+    </div>
+    <div class="row">
+        row 2
+        <button type="button" onclick="document.getElementById('demo2').innerHTML = 'Executed'">Try!
+        </button>
+        <p id="demo2"></p>
+    </div>
+
+    <div class="row">
+        row 3
+        <script src="myScript.js"></script>
+        <button type="button" onclick="myFunction()">Change</button>
+        <p id="demo3">External JS Function</p>
+    </div>
+
+
+    <div class="row">
+        row 4
+        <script src="myscript.js"></script>
+        <button type="button" onclick="myStockFunction()">Fetch API stock-data</button>
+            <p id="stockPrice"></p>
+    </div>
+
+
+</div>
+
+
+<script src="js/all.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+</body>
+</html>
