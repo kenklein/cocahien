@@ -3,7 +3,7 @@ function myFunction () {
 }
 
 function  myStockFunction () {
-    fetch('https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=AAPL&apikey=PZRHDEAG8FRM7HAA')
+    fetch('https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=BTC&apikey=PZRHDEAG8FRM7HAA')
         .then(response => response.json())
         .then(data => {
             // Extract the stock price from the API response
