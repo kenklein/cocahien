@@ -3,47 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="css/all.min.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
-
-    <title>cocahien.nl</title>
+    <link rel="stylesheet" href="css/style.css">
+    <title>Cocahien</title>
 </head>
 <body>
-<div class="container-fluid bg-primary text-white">
-    <div class="row justify-content-md-center">
-        <div class="col-md-auto">
-            <h1>The Cocahien Website</h1>
+<div class="container-fluid">
+    <!-- Header -->
+    <header class="bg-dark text-white text-center p-3">
+        <h1>Cocahien Capital Partners</h1>
+    </header>
+
+    <div class="row">
+        <!-- Left Column: User Inputs -->
+        <div class="col-md-4 bg-light p-4">
+            <h2 class="text-center">Trade Settings</h2>
+            <form id="hedgeFundForm">
+                <div class="form-group">
+                    <label for="balance">Enter Your Balance:</label>
+                    <input type="number" class="form-control" id="balance" placeholder="Enter amount" required>
+                </div>
+                <div class="form-group">
+                    <label for="stock">Select a Stock:</label>
+                    <select class="form-control" id="stock">
+                        <option value="Shell">Shell</option>
+                        <option value="ING Group">ING Group</option>
+                        <option value="Philips">Philips</option>
+                        <option value="Unilever">Unilever</option>
+                        <option value="Heineken">Heineken</option>
+                        <option value="Ahold Delhaize">Ahold Delhaize</option>
+                        <option value="ASML">ASML</option>
+                        <option value="DSM">DSM</option>
+                        <option value="KPN">KPN</option>
+                        <option value="Randstad">Randstad</option>
+                        <option value="Cocahien Super Stock">Cocahien Super Stock</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="leverage">Select Leverage:</label>
+                    <select class="form-control" id="leverage">
+                        <option value="1.5">1.5x</option>
+                        <option value="2">2x</option>
+                        <option value="3">3x</option>
+                        <option value="5">5x (aggressive!)</option>
+                        <option value="10">10x (super risky!)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="timePeriod">Select Time Period:</label>
+                    <select class="form-control" id="timePeriod">
+                        <option value="1">1 Day</option>
+                        <option value="30">1 Month</option>
+                        <option value="90">3 Months</option>
+                        <option value="180">6 Months</option>
+                        <option value="365">1 Year</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-success btn-block" id="buyButton">Buy</button>
+            </form>
         </div>
-    </div>
-<hr>
-    <div class="row justify-content-md-center">
-        <div class="col-md-auto">
-            <button class="btn btn-info">Login</button>
+
+        <!-- Right Column: Results and Graph -->
+        <div class="col-md-8 p-4">
+            <!-- Professional Loading Screen -->
+            <div id="loadingScreen" class="text-center" style="display: none;">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                         aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                </div>
+                <p class="mt-3">Simulating your trade... Please wait!</p>
+            </div>
+
+            <!-- Trade Results -->
+            <div id="result" style="display: none;">
+                <h3>Trade Overview</h3>
+                <p id="tradeSummary"></p>
+                <h4>Profit/Loss: <span id="profitLoss" class="display-4"></span></h4>
+                <canvas id="tradeGraph"></canvas> <!-- Graph Placeholder -->
+            </div>
         </div>
-        <div class="col-md-auto">
-            <a class="btn btn-info" href="Quotes/quotes.html" role="button">Coca Quotes</a>
-        </div>
-        <div class="col-md-auto">
-            <a class="btn btn-info" href="ken%20js%20sandbox/kenjssandbox.html" role="button">KL JS Sandbox</a>
-        </div>
-    </div>
-        <iframe width="330" height="240"
-                src="https://www.youtube.com/embed/01htwHo4yGs?version=3&loop=1&playlist=01htwHo4yGs">
-        </iframe>
     </div>
 
-    <hr>
-
-    <div class="row justify-content-md-center">
-        <div class="col-md-auto">
-            By KL-Partners
-            <a href="https://github.com/kenklein/cocahien" class="list-group-item list-group-item-action active">
-                GitHub Project Link </a>
-        </div>
-    </div>
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center p-3 mt-5">
+        <p>By KL-Partners</p>
+        <a href="https://github.com/kenklein/cocahien" class="text-white">GitHub Project Link</a>
+    </footer>
 </div>
-    <script src="js/all.js"></script>
-    <script src="js/bootstrap.min.js"></script>
 
+<script src="js/bootstrap.min.js"></script>
+<script src="js/chart.min.js"></script> <!-- Chart.js for graphing -->
+<script src="hedgefund.js"></script> <!-- Custom JS for hedge fund simulation -->
 </body>
 </html>
