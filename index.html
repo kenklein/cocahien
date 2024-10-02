@@ -3,96 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <title>Cocahien</title>
+    <title>Cocahien.nl - Hedge Fund Simulator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js from CDN -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .header {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px;
+        }
+        .inputs, .results {
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 20px;
+            width: 45%;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+        }
+        .progress {
+            background-color: #e9ecef;
+            border-radius: 0.25rem;
+            overflow: hidden;
+        }
+        .progress-bar {
+            background-color: #007bff;
+            height: 1rem;
+            transition: width 0.4s ease;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #dee2e6;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-<div class="container-fluid">
-    <!-- Header -->
-    <header class="bg-dark text-white text-center p-3">
-        <h1>Cocahien Capital Partners</h1>
-    </header>
 
-    <div class="row">
-        <!-- Left Column: User Inputs -->
-        <div class="col-md-4 bg-light p-4">
-            <h2 class="text-center">Trade Settings</h2>
-            <form id="hedgeFundForm">
-                <div class="form-group">
-                    <label for="balance">Enter Your Balance:</label>
-                    <input type="number" class="form-control" id="balance" placeholder="Enter amount" required>
-                </div>
-                <div class="form-group">
-                    <label for="stock">Select a Stock:</label>
-                    <select class="form-control" id="stock">
-                        <option value="Shell">Shell</option>
-                        <option value="ING Group">ING Group</option>
-                        <option value="Philips">Philips</option>
-                        <option value="Unilever">Unilever</option>
-                        <option value="Heineken">Heineken</option>
-                        <option value="Ahold Delhaize">Ahold Delhaize</option>
-                        <option value="ASML">ASML</option>
-                        <option value="DSM">DSM</option>
-                        <option value="KPN">KPN</option>
-                        <option value="Randstad">Randstad</option>
-                        <option value="Cocahien Super Stock">Cocahien Super Stock</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="leverage">Select Leverage:</label>
-                    <select class="form-control" id="leverage">
-                        <option value="1.5">1.5x</option>
-                        <option value="2">2x</option>
-                        <option value="3">3x</option>
-                        <option value="5">5x (aggressive!)</option>
-                        <option value="10">10x (super risky!)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="timePeriod">Select Time Period:</label>
-                    <select class="form-control" id="timePeriod">
-                        <option value="1">1 Day</option>
-                        <option value="30">1 Month</option>
-                        <option value="90">3 Months</option>
-                        <option value="180">6 Months</option>
-                        <option value="365">1 Year</option>
-                    </select>
-                </div>
-                <button type="button" class="btn btn-success btn-block" id="buyButton">Buy</button>
-            </form>
-        </div>
-
-        <!-- Right Column: Results and Graph -->
-        <div class="col-md-8 p-4">
-            <!-- Professional Loading Screen -->
-            <div id="loadingScreen" class="text-center" style="display: none;">
-                <div class="progress">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                         aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
-                </div>
-                <p class="mt-3">Simulating your trade... Please wait!</p>
-            </div>
-
-            <!-- Trade Results -->
-            <div id="result" style="display: none;">
-                <h3>Trade Overview</h3>
-                <p id="tradeSummary"></p>
-                <h4>Profit/Loss: <span id="profitLoss" class="display-4"></span></h4>
-                <canvas id="tradeGraph"></canvas> <!-- Graph Placeholder -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center p-3 mt-5">
-        <p>By KL-Partners</p>
-        <a href="https://github.com/kenklein/cocahien" class="text-white">GitHub Project Link</a>
-    </footer>
+<div class="header">
+    <h1>Cocahien Hedge Fund Simulator</h1>
 </div>
 
-<script src="js/bootstrap.min.js"></script>
-<script src="js/chart.min.js"></script> <!-- Chart.js for graphing -->
-<script src="hedgefund.js"></script> <!-- Custom JS for hedge fund simulation -->
+<div class="container">
+    <div class="inputs">
+        <h2>Trade Settings</h2>
+        <form id="hedgeFundForm">
+            <div>
+                <label for="balance">Enter Your Balance (€):</label>
+                <input type="number" id="balance" placeholder="Enter amount" required>
+            </div>
+            <div>
+                <label for="stock">Select a Stock:</label>
+                <select id="stock">
+                    <option value="Shell">Shell</option>
+                    <option value="ING Group">ING Group</option>
+                    <option value="Philips">Philips</option>
+                    <option value="Unilever">Unilever</option>
+                    <option value="Heineken">Heineken</option>
+                    <option value="Ahold Delhaize">Ahold Delhaize</option>
+                    <option value="ASML">ASML</option>
+                    <option value="DSM">DSM</option>
+                    <option value="KPN">KPN</option>
+                    <option value="Randstad">Randstad</option>
+                    <option value="Cocahien Super Stock">Cocahien Super Stock</option>
+                </select>
+            </div>
+            <div>
+                <label for="leverage">Select Leverage:</label>
+                <select id="leverage">
+                    <option value="1.5">1.5x</option>
+                    <option value="2">2x</option>
+                    <option value="3">3x</option>
+                    <option value="5">5x (aggressive!)</option>
+                    <option value="10">10x (super risky!)</option>
+                </select>
+            </div>
+            <div>
+                <label for="timePeriod">Select Time Period:</label>
+                <select id="timePeriod">
+                    <option value="1">1 Day</option>
+                    <option value="30">1 Month</option>
+                    <option value="90">3 Months</option>
+                    <option value="180">6 Months</option>
+                    <option value="365">1 Year</option>
+                </select>
+            </div>
+            <button type="button" id="buyButton">Buy</button>
+            <button type="button" id="resetButton">Reset</button>
+        </form>
+    </div>
+
+    <div class="results">
+        <div class="loading" id="loadingScreen">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+            </div>
+            <p>Simulating your trade... Please wait!</p>
+        </div>
+        <div id="result" style="display: none;">
+            <h3>Trade Overview</h3>
+            <p id="tradeSummary"></p>
+            <h4>Profit/Loss: <span id="profitLoss" class="display-4"></span></h4>
+            <canvas id="tradeGraph" style="margin-top: 20px;"></canvas>
+        </div>
+        <h3>Balance History</h3>
+        <table id="balanceTable" style="display: none;">
+            <thead>
+            <tr>
+                <th>Trade #</th>
+                <th>New Balance (€)</th>
+                <th>Profit/Loss (€)</th>
+                <th>Stock Change (%)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Balance history will be populated here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="footer">
+    <p>By KL-Partners</p>
+    <a href="https://github.com/kenklein/cocahien" style="color: white;">GitHub Project Link</a>
+</div>
+
+<script src="hedgefund.js"></script> <!-- Link to your JavaScript file -->
 </body>
 </html>
