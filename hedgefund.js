@@ -1,12 +1,10 @@
 let tradeCount = 0; // Initialize a counter for trades
 let currentBalance = 0; // Track the user's current balance
 let initialBalance = 0; // Track the initial balance
-const balanceHistory = []; // Array to track balance history for graphing
-
-let chart; // Declare a variable to hold the Chart instance
+let balanceHistory = []; // Array to hold balance history for the graph
 
 // Event listener for the Buy button
-document.getElementById('buyButton').addEventListener('click', function() {
+document.getElementById('buyButton').addEventListener('click', function () {
     const balanceInput = parseFloat(document.getElementById('balance').value);
     const stock = document.getElementById('stock').value;
     const leverage = parseFloat(document.getElementById('leverage').value);
@@ -27,7 +25,7 @@ document.getElementById('buyButton').addEventListener('click', function() {
         }
     }
 
-    // Show loading screen and hide results
+    // Show loading screen for the new trade information
     showLoadingScreen();
 
     // Simulate trade percentage for the stock over the selected period
@@ -39,13 +37,13 @@ document.getElementById('buyButton').addEventListener('click', function() {
     // Build loading animation
     buildLoadingAnimation();
 
-    // Show results after 3 seconds
-    setTimeout(function() {
+    // Show results after 1.5 seconds
+    setTimeout(function () {
         hideLoadingScreen();
         displayResults(stock, leverage, timePeriod, stockChangePercentage, finalBalance, profitOrLoss);
-        updateBalanceHistory(finalBalance, profitOrLoss, stockChangePercentage);
+        updateBalanceHistory(finalBalance, profitOrLoss, stockChangePercentage, stock, leverage); // Updated call with stock and leverage
         drawGraph(); // Update the graph with the new balance history
-    }, 3000); // 3 seconds delay to show results
+    }, 1500); // Reduced to 1.5 seconds delay to show results
 });
 
 // Function to simulate stock price change based on time period
@@ -58,7 +56,7 @@ function simulateStockChange(days) {
 // Show loading screen
 function showLoadingScreen() {
     document.getElementById('loadingScreen').style.display = 'block';
-    document.getElementById('result').style.display = 'none';
+    document.getElementById('result').style.display = 'none'; // Hide the results during loading
     document.getElementById('balanceTable').style.display = 'none'; // Hide balance table
     document.querySelector('.progress-bar').style.width = '0%'; // Reset progress bar
 }
@@ -73,7 +71,7 @@ function buildLoadingAnimation() {
         } else {
             clearInterval(loadingInterval);
         }
-    }, 150); // Small increments every 150ms for smooth loading
+    }, 100); // Small increments every 100ms for smooth loading
 }
 
 // Hide loading screen
@@ -85,25 +83,30 @@ function hideLoadingScreen() {
 function displayResults(stock, leverage, timePeriod, stockChangePercentage, finalBalance, profitOrLoss) {
     document.getElementById('result').style.display = 'block';
     document.getElementById('tradeSummary').innerHTML = `
-        You invested in <strong>${stock}</strong> with leverage <strong>${leverage}x</strong> for <strong>${timePeriod} days</strong>.<br>
-        Stock price changed by <strong>${stockChangePercentage.toFixed(2)}%</strong>.<br>
+        You invested in <strong>${stock}</strong> with a leverage of <strong>${leverage}x</strong> for <strong>${timePeriod} days</strong>.<br>
+        The stock price changed by <strong>${stockChangePercentage.toFixed(2)}%</strong>, which means your investment has been significantly impacted.<br>
         Your balance after the trade is: <strong>€${finalBalance.toFixed(2)}</strong>.<br>
-        Initial balance was: <strong>€${initialBalance.toFixed(2)}</strong>. Difference: <strong>€${(finalBalance - initialBalance).toFixed(2)}</strong> (${((finalBalance - initialBalance) / initialBalance * 100).toFixed(2)}%).
+        Your initial balance was: <strong>€${initialBalance.toFixed(2)}</strong>.<br>
+        This represents a difference of <strong>€${(finalBalance - initialBalance).toFixed(2)}</strong>, which is a <strong>${(((finalBalance - initialBalance) / initialBalance) * 100).toFixed(2)}%</strong> change.
     `;
     document.getElementById('profitLoss').textContent = profitOrLoss >= 0 ? `+€${profitOrLoss.toFixed(2)}` : `-€${Math.abs(profitOrLoss).toFixed(2)}`;
 }
 
 // Update balance history
-function updateBalanceHistory(finalBalance, profitOrLoss, stockChangePercentage) {
+function updateBalanceHistory(finalBalance, profitOrLoss, stockChangePercentage, stock, leverage) {
     tradeCount++;
     currentBalance = finalBalance; // Update current balance after trade
     balanceHistory.push(currentBalance); // Store current balance for graphing
     const balanceTableBody = document.querySelector('#balanceTable tbody');
     const row = balanceTableBody.insertRow();
-    row.insertCell(0).textContent = tradeCount;
-    row.insertCell(1).textContent = `€${currentBalance.toFixed(2)}`;
+
+    // Insert trade information into the table
+    row.insertCell(0).textContent = tradeCount; // Trade #
+    row.insertCell(1).textContent = `€${currentBalance.toFixed(2)}`; // New Balance
     row.insertCell(2).textContent = profitOrLoss >= 0 ? `+€${profitOrLoss.toFixed(2)}` : `-€${Math.abs(profitOrLoss).toFixed(2)}`; // Profit/Loss
     row.insertCell(3).textContent = `${stockChangePercentage.toFixed(2)}%`; // Stock change percentage
+    row.insertCell(4).textContent = stock; // Stock traded
+    row.insertCell(5).textContent = `${leverage}x`; // Leverage used
 
     document.getElementById('balanceTable').style.display = 'table'; // Show balance table
 
@@ -113,38 +116,39 @@ function updateBalanceHistory(finalBalance, profitOrLoss, stockChangePercentage)
 
 // Function to draw a simple balance graph
 function drawGraph() {
-    const ctx = document.getElementById('tradeGraph').getContext('2d');
-    const labels = Array.from({ length: balanceHistory.length }, (_, i) => `Trade ${i + 1}`);
+    const ctxBalance = document.getElementById('tradeGraph').getContext('2d');
+    const labels = Array.from({ length: tradeCount }, (_, i) => `Trade ${i + 1}`);
 
-    // If the chart already exists, destroy it before creating a new one
-    if (chart) {
-        chart.destroy();
+    // Get the balance data
+    const balanceData = balanceHistory; // Use balance history for graphing
+
+    // Get dynamic min and max for balance
+    const minBalance = Math.min(...balanceData);
+    const maxBalance = Math.max(...balanceData);
+
+    // Clear the previous chart instance
+    if (window.balanceChart) {
+        window.balanceChart.destroy();
     }
 
-    // Create a new chart
-    chart = new Chart(ctx, {
+    // Set up balance chart
+    window.balanceChart = new Chart(ctxBalance, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
                 label: 'Balance After Each Trade',
-                data: balanceHistory,
+                data: balanceData,
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 2,
                 fill: false
-            }, {
-                label: 'Normal Trade Without Leverage',
-                data: labels.map(() => initialBalance + (balanceHistory[balanceHistory.length - 1] - initialBalance) / tradeCount), // Dummy line for normal trade
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 2,
-                fill: false,
-                borderDash: [5, 5] // Dashed line for normal trade
             }]
         },
         options: {
             scales: {
                 y: {
-                    beginAtZero: true,
+                    min: minBalance - (maxBalance - minBalance) * 0.1, // Dynamic min for better visualization
+                    max: maxBalance + (maxBalance - minBalance) * 0.1, // Dynamic max for better visualization
                     title: {
                         display: true,
                         text: 'Balance (€)'
@@ -167,23 +171,3 @@ function drawGraph() {
         }
     });
 }
-
-// Reset button functionality
-document.getElementById('resetButton').addEventListener('click', function() {
-        document.getElementById('hedgeFundForm').reset(); // Reset form fields
-        document.getElementById('result').style.display = 'none'; // Hide results
-        document.getElementById('loadingScreen').style.display = 'none'; // Hide loading
-        document.querySelector('.progress-bar').style.width = '0%'; // Reset progress bar
-        tradeCount = 0; // Reset trade counter
-        currentBalance = 0; // Reset current balance
-        initialBalance = 0; // Reset initial balance
-        balanceHistory.length = 0; // Reset balance history
-        document.getElementById('balanceTable').style.display = 'none'; // Hide balance table
-        const balanceTableBody = document.querySelector('#balanceTable tbody');
-        balanceTableBody.innerHTML = ''; // Clear the table body
-        document.getElementById('balance').disabled = false; // Re-enable the balance input
-        if (chart) {
-            chart.destroy(); // Destroy the existing chart
-        }
-    }
-);

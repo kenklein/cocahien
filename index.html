@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cocahien.nl - Hedge Fund Simulator</title>
+    <title>Cocahien Capital Partners - Hedge Fund Simulator</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js from CDN -->
     <style>
         body {
@@ -25,7 +25,8 @@
         }
         .container {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            align-items: center; /* Center items for mobile responsiveness */
             margin: 20px;
         }
         .inputs, .results {
@@ -33,7 +34,9 @@
             border: 1px solid #dee2e6;
             border-radius: 5px;
             padding: 20px;
-            width: 45%;
+            width: 90%; /* Set width to 90% for mobile */
+            max-width: 600px; /* Max width for larger screens */
+            margin-bottom: 20px; /* Spacing between inputs and results */
         }
         .loading {
             display: none;
@@ -61,12 +64,16 @@
             padding: 10px;
             text-align: center;
         }
+        canvas {
+            width: 100% !important; /* Ensure the canvas uses full width */
+            height: 300px !important; /* Set height for consistent sizing */
+        }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h1>Cocahien Hedge Fund Simulator</h1>
+    <h1>Cocahien Capital Partners Hedge Fund Simulator</h1>
 </div>
 
 <div class="container">
@@ -129,7 +136,7 @@
             <h3>Trade Overview</h3>
             <p id="tradeSummary"></p>
             <h4>Profit/Loss: <span id="profitLoss" class="display-4"></span></h4>
-            <canvas id="tradeGraph" style="margin-top: 20px;"></canvas>
+            <canvas id="tradeGraph" style="margin-top: 20px;"></canvas> <!-- Updated to only have one graph -->
         </div>
         <h3>Balance History</h3>
         <table id="balanceTable" style="display: none;">
@@ -139,6 +146,8 @@
                 <th>New Balance (€)</th>
                 <th>Profit/Loss (€)</th>
                 <th>Stock Change (%)</th>
+                <th>Stock</th>
+                <th>Leverage</th>
             </tr>
             </thead>
             <tbody>
